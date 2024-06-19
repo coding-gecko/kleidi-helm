@@ -1,0 +1,22 @@
+{{- if .Values.rbac.create }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+   name: role-tokenreview-binding
+   namespace: {{ include "kleidi.namespaceName" . }}
+   annotations:
+     {{- with .Values.rbac.annotations }}
+     {{- toYaml . | nindent 4 }}
+     {{- end }}
+     {{- if .Values.rbac.keepRB }}
+     helm.sh/resource-policy: "keep"
+     {{- end }}
+roleRef:
+   apiGroup: rbac.authorization.k8s.io
+   kind: ClusterRole
+   name: system:auth-delegator
+subjects:
+- kind: ServiceAccount
+  name: {{ include "kleidi.serviceAccountName" . }}
+  namespace: {{ include "kleidi.namespaceName" . }}
+{{- end }}

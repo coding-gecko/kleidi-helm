@@ -1,0 +1,18 @@
+apiVersion: v2
+appVersion: v1.0.0-c1
+description: kleidi KMS provider plugin for Kubernetes
+home: https://github.com/beezy-dev/kleidi/
+sources:
+  - https://github.com/beezy-dev/kleidi/
+keywords:
+  - kubernetes
+  - kms
+  - kleidi
+  - vault
+  - hsm
+  - softhsm
+maintainers:
+  - email: gmocsi@redhat.com
+    name: Gergo Mocsi
+name: kleidi
+version: 1.0.0

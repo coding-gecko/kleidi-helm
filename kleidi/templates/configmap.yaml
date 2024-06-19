@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "kleidi.fullname" . }}-config
+  namespace: {{ include "kleidi.namespaceName" . }}
+  labels:
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    app: {{ template "kleidi.name" . }}
+data:
+  config.json: |-
+{{ toPrettyJson .Values.deployment.kleidiKmsPlugin.config | indent 6 }}
+{{- if .Values.global.softHsm }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "kleidi.fullname" . }}-init-config
+  namespace: {{ include "kleidi.namespaceName" . }}
+  labels:
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    app: {{ template "kleidi.name" . }}
+data:
+  config.json: |-
+{{ toPrettyJson .Values.deployment.kleidiKmsInit.config | indent 6 }}
+{{- end }}

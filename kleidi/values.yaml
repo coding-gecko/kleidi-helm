@@ -1,0 +1,146 @@
+global:
+  imagePullPolicy: IfNotPresent
+# namespace should stay kube-system
+  namespace: kube-system
+  registry: ghcr.io
+# Use softhsm: runs kleidi with softhsm if set to true
+# If false, vault is used (default)
+  softHsm: false
+
+# Enable debug mode
+debug: false
+
+# The security context for pods
+podSecurityContext:
+  runAsUser: 0
+  runAsGroup: 0
+  fsGroup: 0
+
+# The security context for containers
+containerSecurityContext:
+  allowPrivilegeEscalation: true
+#  readOnlyRootFilesystem: true
+# capabilities:
+#   drop:
+#   - ALL
+
+# Create role bindings
+rbac:
+  create: true
+# add helm.sh/resource-policy: "keep" annotation
+  keepRB: false
+# other annotations
+  annotations: {}
+
+# Use host network
+hostNetwork: true
+
+# serviceAccount settings
+serviceAccount:
+# will create secret also
+  create: true
+# add helm.sh/resource-policy: "keep" annotation
+# serviceAccount won't be deleted if set to true
+# keeps the associated secret as well
+# effect: no need to update JWT token in Vault after helm uninstall/install
+  keepSA: true
+  name: kleidi-vault-auth
+  imagePullSecrets: []
+  annotations: {}
+
+# the name of the PriorityClass
+priorityClassName: system-cluster-critical
+# host aliases
+hostAliases: {}
+
+deployment:
+# Deploys kleidi as deployment
+  enabled: false
+  replicaCount: 1
+
+# Values related to kleidi-kms-init
+  kleidiKmsInit:
+    image: beezy-dev/kleidi-kms-init
+# if registry parameter is set here, it overrides global
+    registry: null
+    tag: latest
+
+# config for softhsm init container
+# it's converted into json inside configmap
+    config:
+      tokenLabel: kleidi-kms-plugin
+      pin: "1234"
+      path: /usr/lib64/softhsm/libsofthsm.so
+
+# Values related to kleidi-kms-plugin
+  kleidiKmsPlugin:
+    image: beezy-dev/kleidi-kms-plugin
+# if registry parameter is set here, it overrides global
+    registry: null
+    tag: vault-dev
+
+# Socket for kleidi to listen on.
+# Must be on a volume.
+    kleidiSock: unix:///tmp/kleidi/kleidi-kms-plugin.sock
+
+# config for kleidi-kms-plugin
+# it's converted into json inside configmap
+    config:
+      namespace: ""
+      transitkey: kleidi
+      vaultrole: kleidi
+      address: http://127.0.0.1:8200
+
+  strategy:
+      type: RollingUpdate
+
+# Resource requests and limits
+# resources: {}
+resources:
+  limits:
+    cpu: 300m
+    memory: 256Mi
+
+# Annotations
+# for daemonset and deployment
+annotations: {}
+
+# affinity
+# affinity: {}
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+        - matchExpressions:
+          - key: node-role.kubernetes.io/control-plane
+            operator: Exists
+
+# tolerations
+# tolerations: {}
+tolerations:
+  - key: node-role.kubernetes.io/control-plane
+    operator: Exists
+    effect: NoSchedule
+  - key: node-role.kubernetes.io/etcd
+    operator: Exists
+    effect: NoExecute
+
+# nodeSelector
+# applies to both Deployment and DaemonSet
+nodeSelector: {}
+
+daemonset:
+# Deploys kleidi as DaemonSet
+  enabled: true
+  # Update Strategy for DaemonSet
+  # updateStrategy: {}
+  updateStrategy:
+    type: RollingUpdate
+
+# extra volumes if needed
+# applies to both Deployment and DaemonSet
+extraVolumes: {}
+
+# extra volume mounts if needed
+# applies to both Deployment and DaemonSet
+extraVolumeMounts: {}
