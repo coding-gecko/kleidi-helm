@@ -15,7 +15,6 @@ jobs:
         ref: ${{ github.event.pull_request.head.ref }}
 
     - name: Run helm-docs
-      uses: losisin/helm-docs-github-action@v1.2.7
+      uses: losisin/helm-docs-github-action@v1
       with:
         chart-search-root: kleidi
-        git-push: true
