@@ -1,12 +1,13 @@
 # -- Global section, settings common for Deployment and DaemonSet options.
+# @default -- Global settings
 global:
-# -- Global image pull policy.  
+# global.imagePullPolicy -- Global image pull policy.  
   imagePullPolicy: Always
-# -- Namespace should stay kube-system.
+# global.namespace -- Namespace should stay kube-system.
   namespace: kube-system
-# -- Registry to fetch images from. Can be locally overwritten.
+# global.registry -- Registry to fetch images from. Can be locally overwritten.
   registry: ghcr.io
-# -- Determines if use softHSM provider or not. If disabled, vault is selected, the init container for Kleidi is not deployed.
+# global.softHsm -- Determines if use softHSM provider or not. If disabled, vault is selected, the init container for Kleidi is not deployed.
   softHsm: false
 
 # -- Enable debug mode
@@ -27,18 +28,20 @@ containerSecurityContext:
 #   - ALL
 
 # -- Create role bindings. Used both in Deployment and DaemonSet.
+# @default -- RBAC settings
 rbac:
-# Create role bindings. Should be set to true.
+# rbac.create -- Create role bindings. Should be set to true.
   create: true
-# -- Preserves Role Bindings after "helm uninstall". It adds annotation "helm.sh/resource-policy: "keep"". Role Bindings survive "helm uninstall".
+# rbac.keepRB -- Preserves Role Bindings after "helm uninstall". It adds annotation "helm.sh/resource-policy: "keep"". Role Bindings survive "helm uninstall".
   keepRB: false
-# -- Annotations for Role Bindings.
+# rbac.annotations -- Annotations for Role Bindings.
   annotations: {}
 
 # -- Use host network. Used both in Deployment and DaemonSet.
 hostNetwork: true
 
 # -- serviceAccount setting. Used both in Deployment and DaemonSet.
+# @default -- ServiceAccount settings.
 serviceAccount:
 # -- Enables/disables the creation of ServiceAccount.
   create: true
@@ -46,17 +49,16 @@ serviceAccount:
   keepSA: true
 # -- Name of the ServiceAccount.
   name: kleidi-vault-auth
-# -- Image Pull Secrets for ServiceAccount.
   imagePullSecrets: []
-# -- Annotations for ServiceAccount and it's secret.
   annotations: {}
 
-# -- Mame of the PriorityClass. Used both in Deployment and DaemonSet.
+# -- Name of the PriorityClass. Used both in Deployment and DaemonSet.
 priorityClassName: system-cluster-critical
 # -- Host aliases. Used both in Deployment and DaemonSet.
 hostAliases: {}
 
 # -- Deploy Kleidi as DaemonSet.
+# @default -- DaemonSet settings.
 daemonset:
 # -- Deploys kleidi as DaemonSet.If this enabled, set "deployment.enabled" to false.
   enabled: true
@@ -65,8 +67,8 @@ daemonset:
     type: RollingUpdate
 
 # -- Deploy Kleidi as Deployment. It also includes the container configurations, these are used regardless Deployment or DaemonSet is selected.
+# @default -- Deployment settings
 deployment:
-# @ignore
 # -- Deploys kleidi as deployment. If this enabled, set "daemonset.enabled" to false.
   enabled: false
 # -- Replica count for pods.
@@ -129,8 +131,8 @@ annotations: {}
 
 # -- Affinity. Used both in Deployment and DaemonSet.
 # affinity: {}
+# @default -- Affinity settings
 affinity:
-# @ignore
   nodeAffinity:
     requiredDuringSchedulingIgnoredDuringExecution:
       nodeSelectorTerms:
@@ -139,8 +141,8 @@ affinity:
             operator: Exists
 
 # -- Tolerations. Used both in Deployment and DaemonSet.
+# @default -- Toleration settings
 tolerations:
-# @ignore
   - key: node-role.kubernetes.io/control-plane
     operator: Exists
     effect: NoSchedule
