@@ -1,6 +1,11 @@
 name: Generate Helm documentation
 on:
-  - pull_request
+  push:
+    branches:
+      - '**'
+    tags-ignore:
+      - '**'
+  workflow_dispatch:
 jobs:
   generate:
     runs-on: ubuntu-latest
