@@ -29,15 +29,16 @@ kleidi KMS provider plugin for Kubernetes
 | debug | bool | `false` | Enable debug mode |
 | deployment | object | Deployment settings | Deploy Kleidi as Deployment. It also includes the container configurations, these are used regardless Deployment or DaemonSet is selected. |
 | deployment.enabled | bool | `false` | Deploys kleidi as deployment. If this enabled, set "daemonset.enabled" to false. |
-| deployment.kleidiKmsInit | object | `{"config":{"path":"/usr/lib64/softhsm/libsofthsm.so","pin":"1234","tokenLabel":"kleidi-kms-plugin"},"image":"beezy-dev/kleidi-kms-init","registry":null,"tag":"softhsm-b5f665d"}` | Values related to kleidi-kms-init container. |
-| deployment.kleidiKmsInit.config | object | `{"path":"/usr/lib64/softhsm/libsofthsm.so","pin":"1234","tokenLabel":"kleidi-kms-plugin"}` | Configurations for softhsm init container. |
+| deployment.kleidiKmsInit | object | kleidi-kms-init container deployment configuration | Values related to kleidi-kms-init container. |
+| deployment.kleidiKmsInit.config | object | kleidi-kms-init configuration (placed into ConfigMap) | Configurations for softhsm init container. |
 | deployment.kleidiKmsInit.config.path | string | `"/usr/lib64/softhsm/libsofthsm.so"` | Library to use for HSM. |
 | deployment.kleidiKmsInit.config.pin | string | `"1234"` | HSM pin. |
 | deployment.kleidiKmsInit.config.tokenLabel | string | `"kleidi-kms-plugin"` | Token Label. Can be same as container name. |
 | deployment.kleidiKmsInit.image | string | `"beezy-dev/kleidi-kms-init"` | Image name. |
 | deployment.kleidiKmsInit.registry | string | `nil` | Override global registry. |
 | deployment.kleidiKmsInit.tag | string | `"softhsm-b5f665d"` | Tag for the image. |
-| deployment.kleidiKmsPlugin.config | object | `{"address":"http://127.0.0.1:8200","namespace":"","transitkey":"kleidi","vaultrole":"kleidi"}` | Config for kleidi-kms-plugin. It's converted into JSON and placed into ConfigMap. |
+| deployment.kleidiKmsPlugin | object | kleidi-kms-plugin container deployment configuration | Values related to kleidi-kms-plugin container |
+| deployment.kleidiKmsPlugin.config | object | kleidi-kms-plugin configuration (placed into ConfigMap) | Config for kleidi-kms-plugin. It's converted into JSON and placed into ConfigMap. |
 | deployment.kleidiKmsPlugin.config.address | string | `"http://127.0.0.1:8200"` | Address of Vault. |
 | deployment.kleidiKmsPlugin.config.namespace | string | `""` | Vault Enterprise namespace. |
 | deployment.kleidiKmsPlugin.config.transitkey | string | `"kleidi"` | Name of Transit Key used in Vault. |
@@ -65,8 +66,9 @@ kleidi KMS provider plugin for Kubernetes
 | rbac.keepRB | bool | `false` | Preserves Role Bindings after "helm uninstall". It adds annotation "helm.sh/resource-policy: "keep"". Role Bindings survive "helm uninstall". |
 | resources | object | `{"limits":{"cpu":"300m","memory":"256Mi"}}` | Resource requests and limits. Used both in Deployment and DaemonSet. |
 | serviceAccount | object | ServiceAccount settings. | serviceAccount setting. Used both in Deployment and DaemonSet. |
+| serviceAccount.annotations | object | `{}` | annotations for ServiceAccount. |
 | serviceAccount.create | bool | `true` | Enables/disables the creation of ServiceAccount. |
-| serviceAccount.keepSA | bool | `true` | Preserves ServiceAccount after "helm uninstall". It adds annotation "helm.sh/resource-policy: "keep"". ServiceAccount survives "helm uninstall". |
+| serviceAccount.imagePullSecrets | list | `[]` | ImagePullSecrets for ServiceAccount. |
 | serviceAccount.name | string | `"kleidi-vault-auth"` | Name of the ServiceAccount. |
 | tolerations | list | Toleration settings | Tolerations. Used both in Deployment and DaemonSet. |
 
