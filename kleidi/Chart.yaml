@@ -1,5 +1,5 @@
 apiVersion: v2
-appVersion: v1.0.0-c1
+appVersion: v1.0.0-c2
 description: kleidi KMS provider plugin for Kubernetes
 home: https://github.com/beezy-dev/kleidi/
 sources:

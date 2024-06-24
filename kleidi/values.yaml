@@ -1,22 +1,24 @@
+# -- Global section, settings common for Deployment and DaemonSet options.
 global:
-  imagePullPolicy: IfNotPresent
-# namespace should stay kube-system
+# -- Global image pull policy.  
+  imagePullPolicy: Always
+# -- Namespace should stay kube-system.
   namespace: kube-system
+# -- Registry to fetch images from. Can be locally overwritten.
   registry: ghcr.io
-# Use softhsm: runs kleidi with softhsm if set to true
-# If false, vault is used (default)
+# -- Determines if use softHSM provider or not. If disabled, vault is selected, the init container for Kleidi is not deployed.
   softHsm: false
 
-# Enable debug mode
+# -- Enable debug mode
 debug: false
 
-# The security context for pods
+# -- The security context for pods. Used both in Deployment and DaemonSet.
 podSecurityContext:
   runAsUser: 0
   runAsGroup: 0
   fsGroup: 0
 
-# The security context for containers
+# -- The security context for containers. Used both in Deployment and DaemonSet.
 containerSecurityContext:
   allowPrivilegeEscalation: true
 #  readOnlyRootFilesystem: true
@@ -24,90 +26,111 @@ containerSecurityContext:
 #   drop:
 #   - ALL
 
-# Create role bindings
+# -- Create role bindings. Used both in Deployment and DaemonSet.
 rbac:
+# Create role bindings. Should be set to true.
   create: true
-# add helm.sh/resource-policy: "keep" annotation
+# -- Preserves Role Bindings after "helm uninstall". It adds annotation "helm.sh/resource-policy: "keep"". Role Bindings survive "helm uninstall".
   keepRB: false
-# other annotations
+# -- Annotations for Role Bindings.
   annotations: {}
 
-# Use host network
+# -- Use host network. Used both in Deployment and DaemonSet.
 hostNetwork: true
 
-# serviceAccount settings
+# -- serviceAccount setting. Used both in Deployment and DaemonSet.
 serviceAccount:
-# will create secret also
+# -- Enables/disables the creation of ServiceAccount.
   create: true
-# add helm.sh/resource-policy: "keep" annotation
-# serviceAccount won't be deleted if set to true
-# keeps the associated secret as well
-# effect: no need to update JWT token in Vault after helm uninstall/install
+# -- Preserves ServiceAccount after "helm uninstall". It adds annotation "helm.sh/resource-policy: "keep"". ServiceAccount survives "helm uninstall".
   keepSA: true
+# -- Name of the ServiceAccount.
   name: kleidi-vault-auth
+# -- Image Pull Secrets for ServiceAccount.
   imagePullSecrets: []
+# -- Annotations for ServiceAccount and it's secret.
   annotations: {}
 
-# the name of the PriorityClass
+# -- Mame of the PriorityClass. Used both in Deployment and DaemonSet.
 priorityClassName: system-cluster-critical
-# host aliases
+# -- Host aliases. Used both in Deployment and DaemonSet.
 hostAliases: {}
 
+# -- Deploy Kleidi as DaemonSet.
+daemonset:
+# -- Deploys kleidi as DaemonSet.If this enabled, set "deployment.enabled" to false.
+  enabled: true
+# -- Update Strategy for DaemonSet.
+  updateStrategy:
+    type: RollingUpdate
+
+# -- Deploy Kleidi as Deployment. It also includes the container configurations, these are used regardless Deployment or DaemonSet is selected.
 deployment:
-# Deploys kleidi as deployment
+# @ignore
+# -- Deploys kleidi as deployment. If this enabled, set "daemonset.enabled" to false.
   enabled: false
+# -- Replica count for pods.
   replicaCount: 1
 
-# Values related to kleidi-kms-init
+# -- Values related to kleidi-kms-init container.
   kleidiKmsInit:
+# -- Image name.
     image: beezy-dev/kleidi-kms-init
-# if registry parameter is set here, it overrides global
+# -- Override global registry.
     registry: null
-    tag: latest
+# -- Tag for the image.
+    tag: softhsm-b5f665d
 
-# config for softhsm init container
-# it's converted into json inside configmap
+# -- Configurations for softhsm init container.
     config:
+# -- Token Label. Can be same as container name.
       tokenLabel: kleidi-kms-plugin
+# -- HSM pin.
       pin: "1234"
+# -- Library to use for HSM.
       path: /usr/lib64/softhsm/libsofthsm.so
 
-# Values related to kleidi-kms-plugin
+# -- Values related to kleidi-kms-plugin container
   kleidiKmsPlugin:
+# -- Image name.
     image: beezy-dev/kleidi-kms-plugin
-# if registry parameter is set here, it overrides global
+# -- Override global registry.
     registry: null
-    tag: vault-dev
+# -- Tag for the image.
+    tag: vault-b5f665d
 
-# Socket for kleidi to listen on.
-# Must be on a volume.
+# -- Socket for kleidi to listen on.
     kleidiSock: unix:///tmp/kleidi/kleidi-kms-plugin.sock
 
-# config for kleidi-kms-plugin
-# it's converted into json inside configmap
+# -- Config for kleidi-kms-plugin. It's converted into JSON and placed into ConfigMap.
     config:
+# -- Vault Enterprise namespace.
       namespace: ""
+# -- Name of Transit Key used in Vault.
       transitkey: kleidi
+# -- Role name in Vault.
       vaultrole: kleidi
+# -- Address of Vault.
       address: http://127.0.0.1:8200
 
+# -- Update strategy.
   strategy:
       type: RollingUpdate
 
-# Resource requests and limits
-# resources: {}
+# -- Resource requests and limits. Used both in Deployment and DaemonSet.
 resources:
   limits:
     cpu: 300m
     memory: 256Mi
 
-# Annotations
-# for daemonset and deployment
+# -- Annotations. Used both in Deployment and DaemonSet.
 annotations: {}
 
-# affinity
+
+# -- Affinity. Used both in Deployment and DaemonSet.
 # affinity: {}
 affinity:
+# @ignore
   nodeAffinity:
     requiredDuringSchedulingIgnoredDuringExecution:
       nodeSelectorTerms:
@@ -115,9 +138,9 @@ affinity:
           - key: node-role.kubernetes.io/control-plane
             operator: Exists
 
-# tolerations
-# tolerations: {}
+# -- Tolerations. Used both in Deployment and DaemonSet.
 tolerations:
+# @ignore
   - key: node-role.kubernetes.io/control-plane
     operator: Exists
     effect: NoSchedule
@@ -125,22 +148,11 @@ tolerations:
     operator: Exists
     effect: NoExecute
 
-# nodeSelector
-# applies to both Deployment and DaemonSet
+# -- NodeSelector(s). Used both in Deployment and DaemonSet.
 nodeSelector: {}
 
-daemonset:
-# Deploys kleidi as DaemonSet
-  enabled: true
-  # Update Strategy for DaemonSet
-  # updateStrategy: {}
-  updateStrategy:
-    type: RollingUpdate
-
-# extra volumes if needed
-# applies to both Deployment and DaemonSet
+# -- Extra volumes if needed. Used both in Deployment and DaemonSet.
 extraVolumes: {}
 
-# extra volume mounts if needed
-# applies to both Deployment and DaemonSet
+# -- Extra volume mounts if needed. Used both in Deployment and DaemonSet.
 extraVolumeMounts: {}
