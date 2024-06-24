@@ -20,14 +20,15 @@ kleidi KMS provider plugin for Kubernetes
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| affinity | object | `{}` | Affinity. Used both in Deployment and DaemonSet. affinity: {} |
+| affinity | object | Affinity settings | Affinity. Used both in Deployment and DaemonSet. affinity: {} |
 | annotations | object | `{}` | Annotations. Used both in Deployment and DaemonSet. |
 | containerSecurityContext | object | `{"allowPrivilegeEscalation":true}` | The security context for containers. Used both in Deployment and DaemonSet. |
-| daemonset | object | `{"enabled":true,"updateStrategy":{"type":"RollingUpdate"}}` | Deploy Kleidi as DaemonSet. |
+| daemonset | object | DaemonSet settings. | Deploy Kleidi as DaemonSet. |
 | daemonset.enabled | bool | `true` | Deploys kleidi as DaemonSet.If this enabled, set "deployment.enabled" to false. |
 | daemonset.updateStrategy | object | `{"type":"RollingUpdate"}` | Update Strategy for DaemonSet. |
 | debug | bool | `false` | Enable debug mode |
-| deployment | object | `{"kleidiKmsInit":{"config":{"path":"/usr/lib64/softhsm/libsofthsm.so","pin":"1234","tokenLabel":"kleidi-kms-plugin"},"image":"beezy-dev/kleidi-kms-init","registry":null,"tag":"softhsm-b5f665d"},"kleidiKmsPlugin":{"config":{"address":"http://127.0.0.1:8200","namespace":"","transitkey":"kleidi","vaultrole":"kleidi"},"image":"beezy-dev/kleidi-kms-plugin","kleidiSock":"unix:///tmp/kleidi/kleidi-kms-plugin.sock","registry":null,"tag":"vault-b5f665d"},"replicaCount":1,"strategy":{"type":"RollingUpdate"}}` | Deploy Kleidi as Deployment. It also includes the container configurations, these are used regardless Deployment or DaemonSet is selected. |
+| deployment | object | Deployment settings | Deploy Kleidi as Deployment. It also includes the container configurations, these are used regardless Deployment or DaemonSet is selected. |
+| deployment.enabled | bool | `false` | Deploys kleidi as deployment. If this enabled, set "daemonset.enabled" to false. |
 | deployment.kleidiKmsInit | object | `{"config":{"path":"/usr/lib64/softhsm/libsofthsm.so","pin":"1234","tokenLabel":"kleidi-kms-plugin"},"image":"beezy-dev/kleidi-kms-init","registry":null,"tag":"softhsm-b5f665d"}` | Values related to kleidi-kms-init container. |
 | deployment.kleidiKmsInit.config | object | `{"path":"/usr/lib64/softhsm/libsofthsm.so","pin":"1234","tokenLabel":"kleidi-kms-plugin"}` | Configurations for softhsm init container. |
 | deployment.kleidiKmsInit.config.path | string | `"/usr/lib64/softhsm/libsofthsm.so"` | Library to use for HSM. |
@@ -48,7 +49,7 @@ kleidi KMS provider plugin for Kubernetes
 | deployment.replicaCount | int | `1` | Replica count for pods. |
 | extraVolumeMounts | object | `{}` | Extra volume mounts if needed. Used both in Deployment and DaemonSet. |
 | extraVolumes | object | `{}` | Extra volumes if needed. Used both in Deployment and DaemonSet. |
-| global | object | `{"imagePullPolicy":"Always","namespace":"kube-system","registry":"ghcr.io","softHsm":false}` | Global section, settings common for Deployment and DaemonSet options. |
+| global | object | Global settings | Global section, settings common for Deployment and DaemonSet options. |
 | global.imagePullPolicy | string | `"Always"` | Global image pull policy.   |
 | global.namespace | string | `"kube-system"` | Namespace should stay kube-system. |
 | global.registry | string | `"ghcr.io"` | Registry to fetch images from. Can be locally overwritten. |
@@ -57,18 +58,17 @@ kleidi KMS provider plugin for Kubernetes
 | hostNetwork | bool | `true` | Use host network. Used both in Deployment and DaemonSet. |
 | nodeSelector | object | `{}` | NodeSelector(s). Used both in Deployment and DaemonSet. |
 | podSecurityContext | object | `{"fsGroup":0,"runAsGroup":0,"runAsUser":0}` | The security context for pods. Used both in Deployment and DaemonSet. |
-| priorityClassName | string | `"system-cluster-critical"` | Mame of the PriorityClass. Used both in Deployment and DaemonSet. |
-| rbac | object | `{"annotations":{},"create":true,"keepRB":false}` | Create role bindings. Used both in Deployment and DaemonSet. |
+| priorityClassName | string | `"system-cluster-critical"` | Name of the PriorityClass. Used both in Deployment and DaemonSet. |
+| rbac | object | RBAC settings | Create role bindings. Used both in Deployment and DaemonSet. |
 | rbac.annotations | object | `{}` | Annotations for Role Bindings. |
+| rbac.create | bool | `true` | Create role bindings. Should be set to true. |
 | rbac.keepRB | bool | `false` | Preserves Role Bindings after "helm uninstall". It adds annotation "helm.sh/resource-policy: "keep"". Role Bindings survive "helm uninstall". |
 | resources | object | `{"limits":{"cpu":"300m","memory":"256Mi"}}` | Resource requests and limits. Used both in Deployment and DaemonSet. |
-| serviceAccount | object | `{"annotations":{},"create":true,"imagePullSecrets":[],"keepSA":true,"name":"kleidi-vault-auth"}` | serviceAccount setting. Used both in Deployment and DaemonSet. |
-| serviceAccount.annotations | object | `{}` | Annotations for ServiceAccount and it's secret. |
+| serviceAccount | object | ServiceAccount settings. | serviceAccount setting. Used both in Deployment and DaemonSet. |
 | serviceAccount.create | bool | `true` | Enables/disables the creation of ServiceAccount. |
-| serviceAccount.imagePullSecrets | list | `[]` | Image Pull Secrets for ServiceAccount. |
 | serviceAccount.keepSA | bool | `true` | Preserves ServiceAccount after "helm uninstall". It adds annotation "helm.sh/resource-policy: "keep"". ServiceAccount survives "helm uninstall". |
 | serviceAccount.name | string | `"kleidi-vault-auth"` | Name of the ServiceAccount. |
-| tolerations | list | `[{"effect":"NoExecute","key":"node-role.kubernetes.io/etcd","operator":"Exists"}]` | Tolerations. Used both in Deployment and DaemonSet. |
+| tolerations | list | Toleration settings | Tolerations. Used both in Deployment and DaemonSet. |
 
 ----------------------------------------------
 Autogenerated from chart metadata using [helm-docs v1.13.1](https://github.com/norwoodj/helm-docs/releases/v1.13.1)
