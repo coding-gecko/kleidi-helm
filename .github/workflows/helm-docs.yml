@@ -19,4 +19,5 @@ jobs:
       with:
         # The root directory to search recursively within for charts
         chart-search-root: kleidi
+        git-push-user-name: coding-gecko
         git-push: true
