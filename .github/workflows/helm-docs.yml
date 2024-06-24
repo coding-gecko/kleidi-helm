@@ -1,24 +1,17 @@
-name: Generate Helm docs
+name: Generate Helm documentation
 on:
-  push:
-    branches:
-      - '**'
-    tags-ignore:
-      - '**'
-  workflow_dispatch:
+  - pull_request
 jobs:
-  docs:
+  generate:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
       with:
         ref: ${{ github.event.pull_request.head.ref }}
-
-    - name: Helm Docs action
-      uses: losisin/helm-docs-github-action@v1.2.7
-      with:
-        # The root directory to search recursively within for charts
-        chart-search-root: kleidi
-        git-push-user-name: "coding-gecko"
-        git-push-user-email: "gmocsi@redhat.com"
-        git-push: true
+      - name: Run helm-docs
+        uses: losisin/helm-docs-github-action@v1
+        with:
+          git-push: true
+          chart-search-root: kleidi
+          git-push-user-name: "coding-gecko"
+          git-push-user-email: "gmocsi@redhat.com"
