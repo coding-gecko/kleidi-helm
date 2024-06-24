@@ -43,13 +43,15 @@ hostNetwork: true
 # -- serviceAccount setting. Used both in Deployment and DaemonSet.
 # @default -- ServiceAccount settings.
 serviceAccount:
-# -- Enables/disables the creation of ServiceAccount.
+# serviceAccount.create -- Enables/disables the creation of ServiceAccount.
   create: true
-# -- Preserves ServiceAccount after "helm uninstall". It adds annotation "helm.sh/resource-policy: "keep"". ServiceAccount survives "helm uninstall".
+# serviceaccount.keepSA -- Preserves ServiceAccount after "helm uninstall". It adds annotation "helm.sh/resource-policy: "keep"". ServiceAccount survives "helm uninstall".
   keepSA: true
-# -- Name of the ServiceAccount.
+# serviceAccount.name -- Name of the ServiceAccount.
   name: kleidi-vault-auth
+# serviceAccount.imagePullSecrets -- ImagePullSecrets for ServiceAccount.
   imagePullSecrets: []
+# serviceAccount.annotations -- annotations for ServiceAccount.
   annotations: {}
 
 # -- Name of the PriorityClass. Used both in Deployment and DaemonSet.
@@ -60,51 +62,55 @@ hostAliases: {}
 # -- Deploy Kleidi as DaemonSet.
 # @default -- DaemonSet settings.
 daemonset:
-# -- Deploys kleidi as DaemonSet.If this enabled, set "deployment.enabled" to false.
+# daemonset.enabled -- Deploys kleidi as DaemonSet.If this enabled, set "deployment.enabled" to false.
   enabled: true
-# -- Update Strategy for DaemonSet.
+# daemonset.updateStrategy -- Update Strategy for DaemonSet.
   updateStrategy:
     type: RollingUpdate
 
 # -- Deploy Kleidi as Deployment. It also includes the container configurations, these are used regardless Deployment or DaemonSet is selected.
 # @default -- Deployment settings
 deployment:
-# -- Deploys kleidi as deployment. If this enabled, set "daemonset.enabled" to false.
+# deployment.enabled -- Deploys kleidi as deployment. If this enabled, set "daemonset.enabled" to false.
   enabled: false
-# -- Replica count for pods.
+# deployment.replicaCount -- Replica count for pods.
   replicaCount: 1
 
-# -- Values related to kleidi-kms-init container.
+# deployment.kleidiKmsInit -- Values related to kleidi-kms-init container.
+# @default -- kleidi-kms-init container deployment configuration
   kleidiKmsInit:
-# -- Image name.
+# deployment.kleidiKmsInit.image -- Image name.
     image: beezy-dev/kleidi-kms-init
-# -- Override global registry.
+# deployment.kleidiKmsInit.registry -- Override global registry.
     registry: null
-# -- Tag for the image.
+# deployment.kleidiKmsInit.tag -- Tag for the image.
     tag: softhsm-b5f665d
 
-# -- Configurations for softhsm init container.
+# deployment.kleidiKmsInit.config -- Configurations for softhsm init container.
+# @default -- kleidi-kms-init configuration (placed into ConfigMap)
     config:
-# -- Token Label. Can be same as container name.
+# deployment.kleidiKmsInit.config.tokenLabel -- Token Label. Can be same as container name.
       tokenLabel: kleidi-kms-plugin
-# -- HSM pin.
+# deployment.kleidiKmsInit.config.pin -- HSM pin.
       pin: "1234"
-# -- Library to use for HSM.
+# deployment.kleidiKmsInit.config.path -- Library to use for HSM.
       path: /usr/lib64/softhsm/libsofthsm.so
 
-# -- Values related to kleidi-kms-plugin container
+# deployment.kleidiKmsPlugin -- Values related to kleidi-kms-plugin container
+# @default -- kleidi-kms-plugin container deployment configuration
   kleidiKmsPlugin:
-# -- Image name.
+# deployment.kleidiKmsPlugin.image -- Image name.
     image: beezy-dev/kleidi-kms-plugin
-# -- Override global registry.
+# deployment.kleidiKmsPlugin.registry -- Override global registry.
     registry: null
-# -- Tag for the image.
+# deployment.kleidiKmsPlugin.tag -- Tag for the image.
     tag: vault-b5f665d
 
-# -- Socket for kleidi to listen on.
+# deployment.kleidiKmsPlugin.kleidiSock -- Socket for kleidi to listen on.
     kleidiSock: unix:///tmp/kleidi/kleidi-kms-plugin.sock
 
 # -- Config for kleidi-kms-plugin. It's converted into JSON and placed into ConfigMap.
+# @default -- kleidi-kms-plugin configuration (placed into ConfigMap)
     config:
 # -- Vault Enterprise namespace.
       namespace: ""
