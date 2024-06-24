@@ -1,0 +1,35 @@
+name: Generate Helm docs
+on:
+  push:
+    branches:
+      - '**'
+    tags-ignore:
+      - '**'
+  workflow_dispatch:
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        ref: ${{ github.event.pull_request.head.ref }}
+
+    - name: Helm Docs action
+      uses: losisin/helm-docs-github-action@v1.2.7
+      with:
+        # The root directory to search recursively within for charts
+        chart-search-root: kleidi
+        # Path to values file
+        values-file: # optional, default is values.yaml
+        # Markdown file path relative to each chart directory to which rendered documentation will be written
+        output-file: # optional, default is README.md
+        # If true it will commit and push the changes (ignored if `fail-on-diff` is set)
+        git-push: # optional, default is false
+        # If empty the name of the GitHub Actions bot will be used (i.e. `github-actions[bot]`)
+        git-push-user-name: # optional, default is github-actions[bot]
+        # If empty the no-reply email of the GitHub Actions bot will be used (i.e. `github-actions[bot]@users.noreply.github.com`)
+        git-push-user-email: # optional, default is github-actions[bot]@users.noreply.github.com
+        # Commit message
+        git-commit-message: # optional, default is update Helm documentation
+        # Fail the job if there is any diff found between the generated output and existing file
+        fail-on-diff: # optional, default is false
