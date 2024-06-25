@@ -1,13 +1,11 @@
-# -- Global section, settings common for Deployment and DaemonSet options.
-# @default -- Global settings
 global:
-# global.imagePullPolicy -- Global image pull policy.  
+  # -- Global image pull policy.  
   imagePullPolicy: Always
-# global.namespace -- Namespace should stay kube-system.
+  # -- Namespace should stay kube-system.
   namespace: kube-system
-# global.registry -- Registry to fetch images from. Can be locally overwritten.
+  # -- Registry to fetch images from. Can be locally overwritten.
   registry: ghcr.io
-# global.softHsm -- Determines if use softHSM provider or not. If disabled, vault is selected, the init container for Kleidi is not deployed.
+  # -- Determines the use of SoftHSM provider. If set to true, SoftHSM is deployed instead of Vault provider.
   softHsm: false
 
 # -- Enable debug mode
@@ -22,36 +20,28 @@ podSecurityContext:
 # -- The security context for containers. Used both in Deployment and DaemonSet.
 containerSecurityContext:
   allowPrivilegeEscalation: true
-#  readOnlyRootFilesystem: true
-# capabilities:
-#   drop:
-#   - ALL
 
-# -- Create role bindings. Used both in Deployment and DaemonSet.
-# @default -- RBAC settings
 rbac:
-# rbac.create -- Create role bindings. Should be set to true.
+  # -- Create role bindings. Should be set to true.
   create: true
-# rbac.keepRB -- Preserves Role Bindings after "helm uninstall". It adds annotation "helm.sh/resource-policy: "keep"". Role Bindings survive "helm uninstall".
+  # -- Preserves Role Bindings after "helm uninstall". It adds annotation "helm.sh/resource-policy: "keep"". Role Bindings survive "helm uninstall".
   keepRB: false
-# rbac.annotations -- Annotations for Role Bindings.
+  # -- Annotations for Role Bindings.
   annotations: {}
 
 # -- Use host network. Used both in Deployment and DaemonSet.
 hostNetwork: true
 
-# -- serviceAccount setting. Used both in Deployment and DaemonSet.
-# @default -- ServiceAccount settings.
 serviceAccount:
-# serviceAccount.create -- Enables/disables the creation of ServiceAccount.
+  # -- Enables/disables the creation of ServiceAccount.
   create: true
-# serviceaccount.keepSA -- Preserves ServiceAccount after "helm uninstall". It adds annotation "helm.sh/resource-policy: "keep"". ServiceAccount survives "helm uninstall".
+  # -- Preserves ServiceAccount after "helm uninstall". It adds annotation "helm.sh/resource-policy: "keep"". ServiceAccount survives "helm uninstall".
   keepSA: true
-# serviceAccount.name -- Name of the ServiceAccount.
+  # -- Name of the ServiceAccount.
   name: kleidi-vault-auth
-# serviceAccount.imagePullSecrets -- ImagePullSecrets for ServiceAccount.
+  # -- ImagePullSecrets for ServiceAccount.
   imagePullSecrets: []
-# serviceAccount.annotations -- annotations for ServiceAccount.
+  # -- annotations for ServiceAccount.
   annotations: {}
 
 # -- Name of the PriorityClass. Used both in Deployment and DaemonSet.
@@ -59,69 +49,58 @@ priorityClassName: system-cluster-critical
 # -- Host aliases. Used both in Deployment and DaemonSet.
 hostAliases: {}
 
-# -- Deploy Kleidi as DaemonSet.
-# @default -- DaemonSet settings.
 daemonset:
-# daemonset.enabled -- Deploys kleidi as DaemonSet.If this enabled, set "deployment.enabled" to false.
+  # -- Deploys kleidi as DaemonSet.If this enabled, set "deployment.enabled" to false.
   enabled: true
-# daemonset.updateStrategy -- Update Strategy for DaemonSet.
+  # -- Update Strategy for DaemonSet.
   updateStrategy:
     type: RollingUpdate
 
-# -- Deploy Kleidi as Deployment. It also includes the container configurations, these are used regardless Deployment or DaemonSet is selected.
-# @default -- Deployment settings
 deployment:
-# deployment.enabled -- Deploys kleidi as deployment. If this enabled, set "daemonset.enabled" to false.
+  # -- Deploys kleidi as deployment. If this enabled, set "daemonset.enabled" to false.
   enabled: false
-# deployment.replicaCount -- Replica count for pods.
+  # -- Replica count for pods.
   replicaCount: 1
 
-# deployment.kleidiKmsInit -- Values related to kleidi-kms-init container.
-# @default -- kleidi-kms-init container deployment configuration
   kleidiKmsInit:
-# deployment.kleidiKmsInit.image -- Image name.
+    # -- Image name for init container.
     image: beezy-dev/kleidi-kms-init
-# deployment.kleidiKmsInit.registry -- Override global registry.
+    # -- Override global registry for init container.
     registry: null
-# deployment.kleidiKmsInit.tag -- Tag for the image.
-    tag: softhsm-b5f665d
+    # -- Tag for init container.
+    tag: hsm-b5f665d
 
-# deployment.kleidiKmsInit.config -- Configurations for softhsm init container.
-# @default -- kleidi-kms-init configuration (placed into ConfigMap)
     config:
-# deployment.kleidiKmsInit.config.tokenLabel -- Token Label. Can be same as container name.
+      # -- Token label for init container. Can be same as container name.
       tokenLabel: kleidi-kms-plugin
-# deployment.kleidiKmsInit.config.pin -- HSM pin.
+      # -- HSM pin for init container.
       pin: "1234"
-# deployment.kleidiKmsInit.config.path -- Library to use for HSM.
+      # -- Library to use for HSM inside init container.
       path: /usr/lib64/softhsm/libsofthsm.so
 
-# deployment.kleidiKmsPlugin -- Values related to kleidi-kms-plugin container
-# @default -- kleidi-kms-plugin container deployment configuration
   kleidiKmsPlugin:
-# deployment.kleidiKmsPlugin.image -- Image name.
+    # -- Image name for KMS plugin container.
     image: beezy-dev/kleidi-kms-plugin
-# deployment.kleidiKmsPlugin.registry -- Override global registry.
+    # -- Override global for KMS plugin container.
     registry: null
-# deployment.kleidiKmsPlugin.tag -- Tag for the image.
+    # -- Image tag for KMS plugin container.
     tag: vault-b5f665d
+    # tag: hsm-b5f665d
 
-# deployment.kleidiKmsPlugin.kleidiSock -- Socket for kleidi to listen on.
+    # -- Socket for kleidi to listen on.
     kleidiSock: unix:///tmp/kleidi/kleidi-kms-plugin.sock
 
-# -- Config for kleidi-kms-plugin. It's converted into JSON and placed into ConfigMap.
-# @default -- kleidi-kms-plugin configuration (placed into ConfigMap)
     config:
-# -- Vault Enterprise namespace.
+      # -- Vault Enterprise namespace.
       namespace: ""
-# -- Name of Transit Key used in Vault.
+      # -- Name of Transit Key used in Vault.
       transitkey: kleidi
-# -- Role name in Vault.
+      # -- Role name in Vault.
       vaultrole: kleidi
-# -- Address of Vault.
+      # -- Address of Vault.
       address: http://127.0.0.1:8200
 
-# -- Update strategy.
+  # -- Update strategy.
   strategy:
       type: RollingUpdate
 
@@ -136,8 +115,7 @@ annotations: {}
 
 
 # -- Affinity. Used both in Deployment and DaemonSet.
-# affinity: {}
-# @default -- Affinity settings
+# @default -- Affinity settings, defaults added.
 affinity:
   nodeAffinity:
     requiredDuringSchedulingIgnoredDuringExecution:
@@ -147,7 +125,7 @@ affinity:
             operator: Exists
 
 # -- Tolerations. Used both in Deployment and DaemonSet.
-# @default -- Toleration settings
+# @default -- Toleration settings, defaults added.
 tolerations:
   - key: node-role.kubernetes.io/control-plane
     operator: Exists
