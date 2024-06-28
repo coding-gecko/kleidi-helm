@@ -6,7 +6,7 @@ Helm Chart for Kleidi: https://github.com/beezy-dev/kleidi/
 # Deployment
 Chart offers two deployment modes: deploys DaemonSet or Deployment. By default, DaemonSet is enabled.
 ## Configuration
-See values.yaml what can be configured.
+See kleidi/README.md about what can be configured.
 ## Installing the chart with Helm
 Assuming you've downloaded the chart into folder named 'kleidi' and filled out 'kleidi-values.yaml':
 ```bash
