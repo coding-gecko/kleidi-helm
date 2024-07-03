@@ -1,0 +1,17 @@
+{{ .Chart.Name }} is deployed.
+Release name is {{ .Release.Name }}.
+To learn more about the release, try:
+
+  $ helm status {{ .Release.Name }}
+  $ helm get all {{ .Release.Name }}
+
+To verify if {{ .Chart.Name }} is working you can run these commands:
+
+{{- if .Values.daemonset.enabled }}
+* kubectl --namespace {{ .Release.Namespace }} get daemonset {{ include "kleidi.fullname" . }}
+* kubectl --namespace {{ .Release.Namespace }} describe daemonset {{ include "kleidi.fullname" . }}
+{{- end }}
+{{- if .Values.deployment.enabled }}
+* kubectl --namespace {{ .Release.Namespace }} get deployment {{ include "kleidi.fullname" . }}
+* kubectl --namespace {{ .Release.Namespace }} describe deployment {{ include "kleidi.fullname" . }}
+{{- end }}

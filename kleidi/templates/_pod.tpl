@@ -50,7 +50,7 @@ spec:
           fi
 
           mkdir -p /var/lib/softhsm/tokens
-          
+
           TOKEN_LABEL=$(jq -r '.tokenLabel' /opt/softhsm/config.json)
           PIN=$(jq -r '.pin' /opt/softhsm/config.json)
           MODULE_PATH=$(jq -r '.path' /opt/softhsm/config.json)
@@ -91,6 +91,14 @@ spec:
       resources:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      env:
+      {{- if .Values.tls.enabled }}
+        - name: "VAULT_CACERT"
+          value: "/opt/kleidi/tls/vault-ca.pem"
+      {{- end }}
+      {{- with .Values.deployment.kleidiKmsPlugin.extraEnv }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       volumeMounts:
         - name: token
           mountPath: /var/run/secrets/kubernetes.io/serviceaccount/
@@ -105,6 +113,11 @@ spec:
         {{- else }}
         - name: config
           mountPath: /opt/kleidi
+          readOnly: true
+        {{- end }}
+        {{- if .Values.tls.enabled }}
+        - name: tls-config
+          mountPath: /opt/kleidi/tls
           readOnly: true
         {{- end }}
         {{- with .Values.extraVolumeMounts }}
@@ -138,6 +151,14 @@ spec:
     - name: config
       configMap:
         name: "{{ template "kleidi.fullname" . }}-config"
+    {{- end }}
+    {{- if .Values.tls.enabled }}
+    - name: tls-config
+      secret:
+        secretName: {{ .Values.tls.secretName }}
+        items:
+        - key: {{ .Values.tls.keyName }}
+          path: vault-ca.pem
     {{- end }}
     {{- with .Values.extraVolumes }}
     {{- toYaml . | nindent 4 }}
