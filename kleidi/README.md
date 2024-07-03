@@ -37,6 +37,7 @@ kleidi KMS provider plugin for Kubernetes
 | deployment.kleidiKmsPlugin.config.namespace | string | `""` | Vault Enterprise namespace. |
 | deployment.kleidiKmsPlugin.config.transitkey | string | `"kleidi"` | Name of Transit Key used in Vault. |
 | deployment.kleidiKmsPlugin.config.vaultrole | string | `"kleidi"` | Role name in Vault. |
+| deployment.kleidiKmsPlugin.extraEnv | list | `[]` | Extra environment values for KMS plugin container. |
 | deployment.kleidiKmsPlugin.image | string | `"beezy-dev/kleidi-kms-plugin"` | Image name for KMS plugin container. |
 | deployment.kleidiKmsPlugin.kleidiSock | string | `"unix:///tmp/kleidi/kleidi-kms-plugin.sock"` | Socket for kleidi to listen on. |
 | deployment.kleidiKmsPlugin.registry | string | `nil` | Override global for KMS plugin container. |
@@ -63,6 +64,9 @@ kleidi KMS provider plugin for Kubernetes
 | serviceAccount.imagePullSecrets | list | `[]` | ImagePullSecrets for ServiceAccount. |
 | serviceAccount.keepSA | bool | `true` | Preserves ServiceAccount after "helm uninstall". It adds annotation "helm.sh/resource-policy: "keep"". ServiceAccount survives "helm uninstall". |
 | serviceAccount.name | string | `"kleidi-vault-auth"` | Name of the ServiceAccount. |
+| tls.enabled | bool | `false` | Enables/Disables TLS between Kleidi and Vault |
+| tls.keyName | string | `"cafile"` | Key name inside secret. |
+| tls.secretName | string | `"vault-ca"` | Vault CA chain secret name - you need to create it manually. Secret should be present in the same namespace as Kleidi. |
 | tolerations | list | Toleration settings, defaults added. | Tolerations. Used both in Deployment and DaemonSet. |
 
 ----------------------------------------------
