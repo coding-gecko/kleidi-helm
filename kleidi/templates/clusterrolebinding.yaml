@@ -3,7 +3,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
    name: role-tokenreview-binding
-   namespace: {{ include "kleidi.namespaceName" . }}
+   namespace: kube-system
    annotations:
      {{- with .Values.rbac.annotations }}
      {{- toYaml . | nindent 4 }}
@@ -18,5 +18,5 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: {{ include "kleidi.serviceAccountName" . }}
-  namespace: {{ include "kleidi.namespaceName" . }}
+  namespace: kube-system
 {{- end }}

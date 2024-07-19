@@ -21,6 +21,15 @@ podSecurityContext:
 containerSecurityContext:
   allowPrivilegeEscalation: true
 
+tls:
+  # -- Enables/Disables TLS between Kleidi and Vault
+  enabled: false
+  # -- Vault CA chain secret name - you need to create it manually.
+  # Secret should be present in the same namespace as Kleidi.
+  secretName: vault-ca
+  # -- Key name inside secret.
+  keyName: cafile
+
 rbac:
   # -- Create role bindings. Should be set to true.
   create: true
@@ -99,6 +108,9 @@ deployment:
       vaultrole: kleidi
       # -- Address of Vault.
       address: http://127.0.0.1:8200
+
+    # -- Extra environment values for KMS plugin container.
+    extraEnv: []
 
   # -- Update strategy.
   strategy:
