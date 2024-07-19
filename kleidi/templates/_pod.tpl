@@ -83,7 +83,7 @@ spec:
         - -provider=hvault
         - -configfile=/opt/kleidi/config.json
       {{- end }}
-        - -listen={{ .Values.deployment.kleidiKmsPlugin.kleidiSock }}
+        - -listen=unix:///tmp/kleidi/{{ .Values.deployment.kleidiKmsPlugin.kleidiSock }}
       {{- if .Values.debug }}
         - -debugmode=true
       {{- end }}
@@ -137,7 +137,9 @@ spec:
             audience: vault
     - name: sock
       hostPath:
-        path: /tmp/kleidi
+        {{- with .Values.deployment.kleidiKmsPlugin }}
+        path: {{ .kleidiHostVolumePath }}
+        {{- end }}
         type: DirectoryOrCreate
     {{- if .Values.global.softHsm }}
     - name: softhsm-tokens
