@@ -96,8 +96,11 @@ deployment:
     tag: vault-b5f665d
     # tag: hsm-b5f665d
 
-    # -- Socket for kleidi to listen on.
-    kleidiSock: unix:///tmp/kleidi/kleidi-kms-plugin.sock
+    # -- Socket for Kleidi to listen on - to be used in k8s encryption config.
+    kleidiSock: kleidi-kms-plugin.sock
+    # -- Host Volume for Kleidi - to be used in k8s encryption config.
+    # Full socket path is going to look like the following: unix://{kleidiHostVolumePath}/{kleidiSock}
+    kleidiHostVolumePath: /var/run/kleidi
 
     config:
       # -- Vault Enterprise namespace.

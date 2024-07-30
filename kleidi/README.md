@@ -39,7 +39,8 @@ kleidi KMS provider plugin for Kubernetes
 | deployment.kleidiKmsPlugin.config.vaultrole | string | `"kleidi"` | Role name in Vault. |
 | deployment.kleidiKmsPlugin.extraEnv | list | `[]` | Extra environment values for KMS plugin container. |
 | deployment.kleidiKmsPlugin.image | string | `"beezy-dev/kleidi-kms-plugin"` | Image name for KMS plugin container. |
-| deployment.kleidiKmsPlugin.kleidiSock | string | `"unix:///tmp/kleidi/kleidi-kms-plugin.sock"` | Socket for kleidi to listen on. |
+| deployment.kleidiKmsPlugin.kleidiHostVolumePath | string | `"/var/run/kleidi"` | Host Volume for Kleidi - to be used in k8s encryption config. Full socket path is going to look like the following: unix://{kleidiHostVolumePath}/{kleidiSock} |
+| deployment.kleidiKmsPlugin.kleidiSock | string | `"kleidi-kms-plugin.sock"` | Socket for Kleidi to listen on - to be used in k8s encryption config. |
 | deployment.kleidiKmsPlugin.registry | string | `nil` | Override global for KMS plugin container. |
 | deployment.kleidiKmsPlugin.tag | string | `"vault-b5f665d"` | Image tag for KMS plugin container. |
 | deployment.replicaCount | int | `1` | Replica count for pods. |
