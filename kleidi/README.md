@@ -45,6 +45,7 @@ kleidi KMS provider plugin for Kubernetes
 | deployment.kleidiKmsPlugin.tag | string | `"vault-b5f665d"` | Image tag for KMS plugin container. |
 | deployment.replicaCount | int | `1` | Replica count for pods. |
 | deployment.strategy | object | `{"type":"RollingUpdate"}` | Update strategy. |
+| extraMetadataLabels | object | `{}` | Extra labels for pod pod metadata (metadata.labels). |
 | extraVolumeMounts | object | `{}` | Extra volume mounts if needed. Used both in Deployment and DaemonSet. |
 | extraVolumes | object | `{}` | Extra volumes if needed. Used both in Deployment and DaemonSet. |
 | global.imagePullPolicy | string | `"Always"` | Global image pull policy.   |
