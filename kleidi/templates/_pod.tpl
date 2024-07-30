@@ -6,6 +6,9 @@ metadata:
   labels:
     name: {{ include "kleidi.fullname" . }}
     {{- include "kleidi.selectorLabels" . | nindent 4 }}
+    {{- with .Values.extraMetadataLabels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
   annotations:
     {{- with .Values.podAnnotations }}
     {{- toYaml . | nindent 4 }}

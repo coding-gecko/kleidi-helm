@@ -128,6 +128,8 @@ resources:
 # -- Annotations. Used both in Deployment and DaemonSet.
 annotations: {}
 
+# -- Extra labels for pod pod metadata (metadata.labels).
+extraMetadataLabels: {}
 
 # -- Affinity. Used both in Deployment and DaemonSet.
 # @default -- Affinity settings, defaults added.
