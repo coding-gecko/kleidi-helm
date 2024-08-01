@@ -64,12 +64,16 @@ daemonset:
   # -- Update Strategy for DaemonSet.
   updateStrategy:
     type: RollingUpdate
+  # -- Extra labels for DaemonSet.
+  extraLabels: {}
 
 deployment:
   # -- Deploys kleidi as deployment. If this enabled, set "daemonset.enabled" to false.
   enabled: false
   # -- Replica count for pods.
   replicaCount: 1
+  # -- Extra labels for deployment.
+  extraLabels: {}
 
   kleidiKmsInit:
     # -- Image name for init container.
