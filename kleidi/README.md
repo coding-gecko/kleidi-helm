@@ -24,9 +24,11 @@ kleidi KMS provider plugin for Kubernetes
 | annotations | object | `{}` | Annotations. Used both in Deployment and DaemonSet. |
 | containerSecurityContext | object | `{"allowPrivilegeEscalation":true}` | The security context for containers. Used both in Deployment and DaemonSet. |
 | daemonset.enabled | bool | `true` | Deploys kleidi as DaemonSet.If this enabled, set "deployment.enabled" to false. |
+| daemonset.extraLabels | object | `{}` | Extra labels for DaemonSet. |
 | daemonset.updateStrategy | object | `{"type":"RollingUpdate"}` | Update Strategy for DaemonSet. |
 | debug | bool | `false` | Enable debug mode |
 | deployment.enabled | bool | `false` | Deploys kleidi as deployment. If this enabled, set "daemonset.enabled" to false. |
+| deployment.extraLabels | object | `{}` | Extra labels for deployment. |
 | deployment.kleidiKmsInit.config.path | string | `"/usr/lib64/softhsm/libsofthsm.so"` | Library to use for HSM inside init container. |
 | deployment.kleidiKmsInit.config.pin | string | `"1234"` | HSM pin for init container. |
 | deployment.kleidiKmsInit.config.tokenLabel | string | `"kleidi-kms-plugin"` | Token label for init container. Can be same as container name. |
@@ -45,6 +47,7 @@ kleidi KMS provider plugin for Kubernetes
 | deployment.kleidiKmsPlugin.tag | string | `"vault-b5f665d"` | Image tag for KMS plugin container. |
 | deployment.replicaCount | int | `1` | Replica count for pods. |
 | deployment.strategy | object | `{"type":"RollingUpdate"}` | Update strategy. |
+| extraMetadataLabels | object | `{}` | Extra labels for pod pod metadata (metadata.labels). |
 | extraVolumeMounts | object | `{}` | Extra volume mounts if needed. Used both in Deployment and DaemonSet. |
 | extraVolumes | object | `{}` | Extra volumes if needed. Used both in Deployment and DaemonSet. |
 | global.imagePullPolicy | string | `"Always"` | Global image pull policy.   |

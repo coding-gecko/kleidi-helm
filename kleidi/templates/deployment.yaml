@@ -8,6 +8,9 @@ metadata:
     tier: control-plane
     component: {{ include "kleidi.fullname" . }}
     {{- include "kleidi.labels" . | nindent 4 }}
+    {{- with .Values.deployment.extraLabels }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
   {{- with .Values.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
