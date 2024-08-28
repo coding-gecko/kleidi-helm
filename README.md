@@ -9,12 +9,29 @@ You can deploy Kleidi with tor without TLS. For TLS, you need to configure Vault
 ## Configuration
 See kleidi/README.md about what can be configured.</br>
 **Note:** it is strongly recommended to install Kleidi into "kube-system".
+### Read configuration from Host File System
+Set parameter "global.configFromFileSystem" to true. Now, instead of creating a ConfigMap from Kleidi configuration (contains Vault specific config) and in case of TLS a secret (containing Vault CA Cert), these are read from host file system.</br>
+Set the following parameters accordingly for Kleidi config:
+```yaml
+configVolume:
+  path: /etc/kleidi
+  file: config.json
+```
+Set the following parameters accordingly for TLS config:
+```yaml
+tlsConfigVolume:
+  path: /etc/kleidi/tls
+  file: vault-ca.pem
+```
+**Note: the give location and file must exsist on the filesystem!!**</br>
+
 ## Installing Helm chart - TLS disabled
 Assuming you've downloaded the chart into folder named 'kleidi' and filled out 'kleidi-values.yaml':
 ```bash
 $ helm install kleidi kleidi/ -n kube-system -f kleidi-values.yaml
 ```
 ## Installing Helm chart - TLS enabled
+**Note: if you have chosen to read configuration from filesystem (global.configFromFileSystem: "true"), ignore secret creation step, make sure you have "tls.enable" set to "true".**</br>
 First you need to create a secret containing Vault Root CA cert before you install the chart with Helm. 
 For this example, let's assume it is called 'vault-ca.pem' and you've downloaded it into '/tmp/vault-certs.pem'.
 Create the secret in the following way (called "vault-ca" in this example with key name "cafile"):
