@@ -7,9 +7,26 @@ global:
   registry: ghcr.io
   # -- Determines the use of SoftHSM provider. If set to true, SoftHSM is deployed instead of Vault provider.
   softHsm: false
+  # -- reads Kleidi config from host filesystem instead of this file and a secret.
+  configFromFileSystem: false
 
 # -- Enable debug mode
 debug: false
+
+# -- Volume to read Kleidi config - created from a file on the filesystem.
+# Effective if configFromFileSystem is set to "false". Used both in Deployment and DaemonSet.
+configVolume:
+  # -- Path on the filesystem
+  path: /etc/kleidi
+  # -- Filename under "path" parameter
+  file: config.json
+
+# -- Volume to read Vault CA Cert from. Used if TLS is enabled and configFromFileSystem is set to "true".
+tlsConfigVolume:
+  # -- Path on the filesystem
+  path: /etc/kleidi/tls
+  # -- Filename under "path" parameter
+  file: vault-ca.pem
 
 # -- The security context for pods. Used both in Deployment and DaemonSet.
 podSecurityContext:

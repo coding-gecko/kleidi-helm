@@ -84,7 +84,11 @@ spec:
         - -configfile=/opt/softhsm/config.json
       {{- else }}
         - -provider=hvault
+        {{- if .Values.global.configFromFileSystem }}
+        - -configfile=/opt/kleidi/{{ .Values.configVolume.file }}
+        {{- else }}
         - -configfile=/opt/kleidi/config.json
+        {{- end }}
       {{- end }}
         - -listen=unix:///tmp/kleidi/{{ .Values.deployment.kleidiKmsPlugin.kleidiSock }}
       {{- if .Values.debug }}
@@ -97,7 +101,11 @@ spec:
       env:
       {{- if .Values.tls.enabled }}
         - name: "VAULT_CACERT"
+          {{- if .Values.global.configFromFileSystem }}
+          value: "/opt/kleidi/tls/{{ .Values.tlsConfigVolume.file }}"
+          {{- else }}
           value: "/opt/kleidi/tls/vault-ca.pem"
+          {{- end }}
       {{- end }}
       {{- with .Values.deployment.kleidiKmsPlugin.extraEnv }}
         {{- toYaml . | nindent 8 }}
@@ -115,12 +123,20 @@ spec:
           mountPath: /var/lib/softhsm/tokens
         {{- else }}
         - name: config
+          {{- if .Values.global.configFromFileSystem }}
+          mountPath: /opt/kleidi/{{ .Values.configVolume.file }}
+          {{- else }}
           mountPath: /opt/kleidi
+          {{- end }}
           readOnly: true
         {{- end }}
         {{- if .Values.tls.enabled }}
         - name: tls-config
+          {{- if .Values.global.configFromFileSystem }}
+          mountPath: /opt/kleidi/tls/{{ .Values.tlsConfigVolume.file }}
+          {{- else }}
           mountPath: /opt/kleidi/tls
+          {{- end }}
           readOnly: true
         {{- end }}
         {{- with .Values.extraVolumeMounts }}
@@ -141,7 +157,7 @@ spec:
     - name: sock
       hostPath:
         {{- with .Values.deployment.kleidiKmsPlugin }}
-        path: {{ .kleidiHostVolumePath }}
+        path: {{ .kleidiHostVolume }}
         {{- end }}
         type: DirectoryOrCreate
     {{- if .Values.global.softHsm }}
@@ -154,16 +170,28 @@ spec:
         name: "{{ template "kleidi.fullname" . }}-init-config"
     {{- else }}
     - name: config
+    {{- if .Values.global.configFromFileSystem }}
+      hostPath:
+        path: {{ .Values.configVolume.path }}/{{ .Values.configVolume.file }}
+        type: File
+    {{- else }}
       configMap:
         name: "{{ template "kleidi.fullname" . }}-config"
     {{- end }}
+    {{- end }}
     {{- if .Values.tls.enabled }}
     - name: tls-config
+    {{- if .Values.global.configFromFileSystem }}
+      hostPath:
+        path: {{ .Values.tlsConfigVolume.path }}/{{ .Values.tlsConfigVolume.file }}
+        type: File
+    {{- else }}
       secret:
         secretName: {{ .Values.tls.secretName }}
         items:
         - key: {{ .Values.tls.keyName }}
           path: vault-ca.pem
+    {{- end }}
     {{- end }}
     {{- with .Values.extraVolumes }}
     {{- toYaml . | nindent 4 }}

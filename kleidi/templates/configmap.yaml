@@ -1,3 +1,4 @@
+{{- if ne .Values.global.configFromFileSystem true }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -11,6 +12,7 @@ metadata:
 data:
   config.json: |-
 {{ toPrettyJson .Values.deployment.kleidiKmsPlugin.config | indent 6 }}
+{{- end }}
 {{- if .Values.global.softHsm }}
 ---
 apiVersion: v1
