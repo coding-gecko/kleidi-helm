@@ -22,6 +22,9 @@ kleidi KMS provider plugin for Kubernetes
 |-----|------|---------|-------------|
 | affinity | object | Affinity settings, defaults added. | Affinity. Used both in Deployment and DaemonSet. |
 | annotations | object | `{}` | Annotations. Used both in Deployment and DaemonSet. |
+| configVolume | object | `{"file":"config.json","path":"/etc/kleidi"}` | Volume to read Kleidi config - created from a file on the filesystem. Effective if configFromFileSystem is set to "false". Used both in Deployment and DaemonSet. |
+| configVolume.file | string | `"config.json"` | Filename under "path" parameter |
+| configVolume.path | string | `"/etc/kleidi"` | Path on the filesystem |
 | containerSecurityContext | object | `{"allowPrivilegeEscalation":true}` | The security context for containers. Used both in Deployment and DaemonSet. |
 | daemonset.enabled | bool | `true` | Deploys kleidi as DaemonSet.If this enabled, set "deployment.enabled" to false. |
 | daemonset.extraLabels | object | `{}` | Extra labels for DaemonSet. |
@@ -50,6 +53,7 @@ kleidi KMS provider plugin for Kubernetes
 | extraMetadataLabels | object | `{}` | Extra labels for pod pod metadata (metadata.labels). |
 | extraVolumeMounts | object | `{}` | Extra volume mounts if needed. Used both in Deployment and DaemonSet. |
 | extraVolumes | object | `{}` | Extra volumes if needed. Used both in Deployment and DaemonSet. |
+| global.configFromFileSystem | bool | `false` | reads Kleidi config from host filesystem instead of this file and a secret. |
 | global.imagePullPolicy | string | `"Always"` | Global image pull policy.   |
 | global.namespace | string | `"kube-system"` | Namespace should stay kube-system. |
 | global.registry | string | `"ghcr.io"` | Registry to fetch images from. Can be locally overwritten. |
@@ -71,6 +75,9 @@ kleidi KMS provider plugin for Kubernetes
 | tls.enabled | bool | `false` | Enables/Disables TLS between Kleidi and Vault |
 | tls.keyName | string | `"cafile"` | Key name inside secret. |
 | tls.secretName | string | `"vault-ca"` | Vault CA chain secret name - you need to create it manually. Secret should be present in the same namespace as Kleidi. |
+| tlsConfigVolume | object | `{"file":"vault-ca.pem","path":"/etc/kleidi/tls"}` | Volume to read Vault CA Cert from. Used if TLS is enabled and configFromFileSystem is set to "true". |
+| tlsConfigVolume.file | string | `"vault-ca.pem"` | Filename under "path" parameter |
+| tlsConfigVolume.path | string | `"/etc/kleidi/tls"` | Path on the filesystem |
 | tolerations | list | Toleration settings, defaults added. | Tolerations. Used both in Deployment and DaemonSet. |
 
 ----------------------------------------------
